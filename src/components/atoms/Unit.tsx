@@ -12,6 +12,7 @@ const colorMap: { [key in UnitVariant]: string } = {
 const StyledUnit = styled.span<{ variant: UnitVariant }>`
   width: 20px;
   height: 20px;
+  position: absolute;
   display: inline-block;
   background-color: ${(props) => colorMap[props.variant]};
   border-radius: ${(props) =>
@@ -25,6 +26,17 @@ const StyledUnit = styled.span<{ variant: UnitVariant }>`
 //variant의 크기는 모두 같음. 단, 색은 다름.
 //variant는 enum으로 관리함.
 //player만 네모, 나머지는 동그라미로 표시함.
-export const Unit = ({ variant }: { variant: UnitVariant }) => {
-  return <StyledUnit variant={variant}></StyledUnit>;
+export const Unit = ({
+  variant,
+  position,
+}: {
+  variant: UnitVariant;
+  position: { x: number; y: number };
+}) => {
+  return (
+    <StyledUnit
+      variant={variant}
+      style={{ left: position.x, top: position.y }}
+    ></StyledUnit>
+  );
 };
