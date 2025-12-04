@@ -24,13 +24,13 @@ export default function usePlayerMoves() {
             newY = Math.max(0, prevPosition.y - step);
             break;
           case "ArrowDown":
-            newY = Math.min(580, prevPosition.y + step);
+            newY = Math.min(575, prevPosition.y + step);
             break;
           case "ArrowLeft":
             newX = Math.max(0, prevPosition.x - step);
             break;
           case "ArrowRight":
-            newX = Math.min(580, prevPosition.x + step);
+            newX = Math.min(575, prevPosition.x + step);
             break;
         }
         const newPosition: Position = { x: newX, y: newY };
