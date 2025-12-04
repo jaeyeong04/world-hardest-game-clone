@@ -10,3 +10,10 @@ export enum TextUsage {
   STATUS = "status",
   TIME = "time",
 }
+
+export enum KeyCode {
+  UP = "ArrowUp",
+  DOWN = "ArrowDown",
+  LEFT = "ArrowLeft",
+  RIGHT = "ArrowRight",
+}
