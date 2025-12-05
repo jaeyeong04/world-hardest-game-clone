@@ -1,9 +1,10 @@
 //Unit 중에 variant가 PLAYER인 '말'의 움직임을 관리하는 custom hook
 //event listener를 통해 방향키 입력을 감지하고, 해당 방향으로 '말'의 위치를 업데이트
-import { useState, useEffect, useRef, use } from "react";
+import { useState, useEffect, useRef, use, useCallback } from "react";
 import { MOVE_DISTANCE } from "../constants/constants";
 import { KeyCode } from "../constants/enum";
 import { MAP_BOUNDARY } from "../constants/constants";
+import useGameLoop from "./useGameLoop";
 
 interface Position {
   x: number;
@@ -41,8 +42,10 @@ export default function usePlayerMoves() {
       window.removeEventListener("keyup", handleKeyUp);
     };
   }, []);
+
   //position을 set하는 코드
-  const handlePlayerMovement = () => {
+  //useCallback을 사용하여 의존성 배열에 있는 값이 변경될 때만 함수가 재생성되도록 함
+  const handlePlayerMovement = useCallback(() => {
     //dominant key = 나중에 입력된 키
     //가로와 세로 방향에 각각 dominant key를 정해서, dominant key 방향으로만 움직이도록 구현
     //dominant key는 pressedKeys 중 가로/세로 방향에 해당하는 키 중 가장 마지막에 입력된 키 => 배열의 뒤쪽에 위치한 키
@@ -60,27 +63,22 @@ export default function usePlayerMoves() {
     let newY = position.y;
     if (verticalDominantKey) {
       if (verticalDominantKey === KeyCode.UP) {
-        newY = newY <= 0 ? 0 : newY - MOVE_DISTANCE;
+        newY = Math.max(0, newY - MOVE_DISTANCE);
       } else if (verticalDominantKey === KeyCode.DOWN) {
-        newY = newY >= MAP_BOUNDARY ? MAP_BOUNDARY : newY + MOVE_DISTANCE;
+        newY = Math.min(MAP_BOUNDARY, newY + MOVE_DISTANCE);
       }
     }
     if (horizontalDominantKey) {
       if (horizontalDominantKey === KeyCode.LEFT) {
-        newX = newX <= 0 ? 0 : newX - MOVE_DISTANCE;
+        newX = Math.max(0, newX - MOVE_DISTANCE);
       } else if (horizontalDominantKey === KeyCode.RIGHT) {
-        newX = newX >= MAP_BOUNDARY ? MAP_BOUNDARY : newX + MOVE_DISTANCE;
+        newX = Math.min(MAP_BOUNDARY, newX + MOVE_DISTANCE);
       }
     }
     setPosition({ x: newX, y: newY });
-  };
-  //일단 setInterval을 사용해 일정 간격으로 handlePlayerMovement 호출
-  //TODO: useGameLoop이라는 커스텀 훅을 따로 만들 것 -> 게임 루프 관리로 Player 말 이동, 적 유닛 이동, timer 관리를 하여 재사용성 높임
-  useEffect(() => {
-    const interval = setInterval(() => {
-      handlePlayerMovement();
-    }, 16); //약 60fps
-    return () => clearInterval(interval);
   }, [pressedKeys, position]);
+
+  //useGameLoop 훅을 사용해서 매 프레임마다 handlePlayerMovement 호출
+  useGameLoop(handlePlayerMovement);
   return position;
 }
