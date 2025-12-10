@@ -15,25 +15,24 @@ export default function usePlayerMoves() {
   //초기 위치 설정
   const initialPosition: Position = { x: 300, y: 300 };
   const [position, setPosition] = useState<Position>(initialPosition);
-  const [pressedKeys, setPressedKeys] = useState<Array<string>>([]);
+  const [pressedKeys, setPressedKeys] = useState<Array<string>>([]); //key가 눌렸을 때 눌린 키를 pressedKeys에 추가
+  const handleKeyDown = useCallback((event: KeyboardEvent) => {
+    const pressedKeyCode = event.key;
+    setPressedKeys((prevKeys) => {
+      if (!prevKeys.includes(pressedKeyCode)) {
+        return [...prevKeys, pressedKeyCode];
+      }
+      return prevKeys;
+    });
+  }, []);
+  //key가 떼졌을 때 pressedKeys에서 해당 키를 제거
+  const handleKeyUp = useCallback((event: KeyboardEvent) => {
+    const pressedKeyCode = event.key;
+    setPressedKeys((prevKeys) =>
+      prevKeys.filter((key) => key !== pressedKeyCode)
+    );
+  }, []);
   useEffect(() => {
-    //key가 눌렸을 때 눌린 키를 pressedKeys에 추가
-    const handleKeyDown = (event: KeyboardEvent) => {
-      const pressedKeyCode = event.key;
-      setPressedKeys((prevKeys) => {
-        if (!prevKeys.includes(pressedKeyCode)) {
-          return [...prevKeys, pressedKeyCode];
-        }
-        return prevKeys;
-      });
-    };
-    //key가 떼졌을 때 pressedKeys에서 해당 키를 제거
-    const handleKeyUp = (event: KeyboardEvent) => {
-      const pressedKeyCode = event.key;
-      setPressedKeys((prevKeys) =>
-        prevKeys.filter((key) => key !== pressedKeyCode)
-      );
-    };
     //키보드 press 이벤트 리스너 등록 및 해제
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("keyup", handleKeyUp);
