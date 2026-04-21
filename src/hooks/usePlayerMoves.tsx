@@ -5,11 +5,9 @@ import { MOVE_DISTANCE } from "../constants/constants";
 import { KeyCode } from "../constants/enum";
 import { MAP_BOUNDARY } from "../constants/constants";
 import useGameLoop from "./useGameLoop";
+import { Position } from "../constants/enum";
 
-interface Position {
-  x: number;
-  y: number;
-}
+//TODO: pressedKeys를 state가 아닌 ref로 관리하도록 변경하기
 
 export default function usePlayerMoves() {
   //초기 위치 설정
@@ -29,7 +27,7 @@ export default function usePlayerMoves() {
   const handleKeyUp = useCallback((event: KeyboardEvent) => {
     const pressedKeyCode = event.key;
     setPressedKeys((prevKeys) =>
-      prevKeys.filter((key) => key !== pressedKeyCode)
+      prevKeys.filter((key) => key !== pressedKeyCode),
     );
   }, []);
   useEffect(() => {
@@ -49,10 +47,10 @@ export default function usePlayerMoves() {
     //가로와 세로 방향에 각각 dominant key를 정해서, dominant key 방향으로만 움직이도록 구현
     //dominant key는 pressedKeys 중 가로/세로 방향에 해당하는 키 중 가장 마지막에 입력된 키 => 배열의 뒤쪽에 위치한 키
     const verticalMovementKeys = pressedKeys.filter(
-      (key) => key === KeyCode.UP || key === KeyCode.DOWN
+      (key) => key === KeyCode.UP || key === KeyCode.DOWN,
     );
     const horizontalMovementKeys = pressedKeys.filter(
-      (key) => key === KeyCode.LEFT || key === KeyCode.RIGHT
+      (key) => key === KeyCode.LEFT || key === KeyCode.RIGHT,
     );
     const verticalDominantKey =
       verticalMovementKeys[verticalMovementKeys.length - 1];
