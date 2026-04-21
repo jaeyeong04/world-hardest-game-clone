@@ -21,11 +21,14 @@ const StyledUnit = styled.span<{ variant: UnitVariant }>`
   text-align: center;
 `;
 
-//Unit은 게임에 필요한 '말'을 의미함.
-//variant는 '말'의 종류를 의미함. 예: player, enemy, coin 등
-//variant의 크기는 모두 같음. 단, 색은 다름.
-//variant는 enum으로 관리함.
-//player만 네모, 나머지는 동그라미로 표시함.
+/**
+ * 게임의 최소 단위인 '말'을 렌더링하는 컴포넌트
+ * - 모든 유닛은 동일한 크기를 가지며, variant에 따라 색상이 결정됨
+ * - 'player'는 사각형, 그 외(enemy, coin 등)는 원형으로 표시됨
+ * @param variant - 유닛의 종류 (UnitVariant enum 값)
+ * @param position - 유닛의 위치 (x, y 좌표를 포함하는 객체)
+ * @returns 게임 보드 위에 렌더링된 유닛 컴포넌트
+ */
 export const Unit = ({
   variant,
   position,
