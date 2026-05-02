@@ -1,6 +1,10 @@
 import { useRef, useState } from "react";
 import { Position } from "../constants/enum";
-import { MAP_BOUNDARY, MOVE_DISTANCE } from "../constants/constants";
+import {
+  ENEMY_SPEED_SCALE,
+  MAP_BOUNDARY,
+  MOVE_DISTANCE,
+} from "../constants/constants";
 import useGameLoop from "./useGameLoop";
 
 /**
@@ -23,24 +27,12 @@ export default function useEnemyMoves() {
     initialEnemyPositions.current,
   );
   //enemyPositionArray의 { dx, dy }를 저장하는 reference
-  const enemyMovementRef = useRef<{ dx: number; dy: number }[]>([
-    {
-      dx: Math.random() * 3 * MOVE_DISTANCE,
-      dy: Math.random() * 3 * MOVE_DISTANCE,
-    },
-    {
-      dx: -Math.random() * 3 * MOVE_DISTANCE,
-      dy: Math.random() * 3 * MOVE_DISTANCE,
-    },
-    {
-      dx: Math.random() * 3 * MOVE_DISTANCE,
-      dy: -Math.random() * 3 * MOVE_DISTANCE,
-    },
-    {
-      dx: -Math.random() * 3 * MOVE_DISTANCE,
-      dy: -Math.random() * 3 * MOVE_DISTANCE,
-    },
-  ]);
+  const enemyMovementRef = useRef<{ dx: number; dy: number }[]>(
+    initialEnemyPositions.current.map(() => ({
+      dx: Math.random() < 0.5 ? -1 : 1 * ENEMY_SPEED_SCALE * MOVE_DISTANCE,
+      dy: Math.random() < 0.5 ? -1 : 1 * ENEMY_SPEED_SCALE * MOVE_DISTANCE,
+    })),
+  );
   const moveEnemies = () => {
     setEnemyPositionArray((prevPositions) =>
       prevPositions.map((pos, index) => {
