@@ -33,6 +33,7 @@ export default function useEnemyMoves() {
       dy: Math.random() < 0.5 ? -1 : 1 * ENEMY_SPEED_SCALE * MOVE_DISTANCE,
     })),
   );
+  //적의 위치를 주기적으로 업데이트하는 함수 - useGameLoop을 사용하여 일정 간격으로 호출
   const moveEnemies = () => {
     setEnemyPositionArray((prevPositions) =>
       prevPositions.map((pos, index) => {
