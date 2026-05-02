@@ -1,6 +1,7 @@
 import { UnitVariant } from "../../constants/enum";
 import useEnemyMoves from "../../hooks/useEnemyMoves";
 import usePlayerMoves from "../../hooks/usePlayerMoves";
+import useTimer from "../../hooks/useTimer";
 import { Board } from "../atoms/Board";
 import { Unit } from "../atoms/Unit";
 import { GameRecord } from "../molecules/GameRecord";
@@ -16,9 +17,10 @@ const GamePlayAreaContainer = styled.div`
 export const GamePlayArea = () => {
   const PlayerPosition = usePlayerMoves();
   const enemyPositionArray = useEnemyMoves();
+  const time = useTimer();
   return (
     <GamePlayAreaContainer>
-      <GameRecord />
+      <GameRecord time={time} />
       <Board>
         <Unit variant={UnitVariant.PLAYER} position={PlayerPosition} />
         {enemyPositionArray.map((enemyPos, index) => (

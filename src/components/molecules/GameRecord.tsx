@@ -20,8 +20,7 @@ const formatTime = (time: number) => {
   return `${seconds}:${milliseconds.toString().padStart(2, "0")}`;
 };
 
-export const GameRecord = () => {
-  const time = useTimer();
+export const GameRecord = ({ time }: { time: number }) => {
   return (
     <GameRecordContainer>
       <Text usage={TextUsage.LIVES}>Lives: 3</Text>
