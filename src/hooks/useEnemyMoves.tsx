@@ -1,4 +1,4 @@
-import { use, useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Position } from "../constants/enum";
 import {
   ENEMY_SPEED_SCALE,
