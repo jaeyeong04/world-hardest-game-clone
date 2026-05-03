@@ -57,13 +57,13 @@ export default function useEnemyMoves(time: number) {
   };
   //마지막으로 적을 추가한 시간을 저장하는 reference - 일정 시간 간격으로 적을 추가하기 위해 사용
   const lastEnemyAddTimeRef = useRef<number>(time);
-  useGameLoop(() => {
+  //5초 간격으로 적을 추가하는 함수
+  const checkAndSpawnEnemy = () => {
     if (time - lastEnemyAddTimeRef.current >= 5) {
-      // 5초마다 적 추가
       addEnemy();
       lastEnemyAddTimeRef.current = time;
     }
-  });
+  };
   //적의 위치를 주기적으로 업데이트하는 함수 - useGameLoop을 사용하여 일정 간격으로 호출
   const moveEnemies = () => {
     setEnemyPositionArray((prevPositions) =>
@@ -82,6 +82,9 @@ export default function useEnemyMoves(time: number) {
       }),
     );
   };
-  useGameLoop(moveEnemies); // 1초마다 적의 위치 업데이트
+  useGameLoop(() => {
+    moveEnemies();
+    checkAndSpawnEnemy();
+  }); // 1초마다 적의 위치 업데이트
   return enemyPositionArray;
 }
