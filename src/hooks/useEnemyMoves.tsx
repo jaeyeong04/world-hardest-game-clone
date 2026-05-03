@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import { Position } from "../constants/enum";
 import {
   ENEMY_SPEED_SCALE,
@@ -13,7 +13,12 @@ import useGameLoop from "./useGameLoop";
  * @returns enemyPositionArray: 모든 적의 위치를 저장하는 배열 (각 적의 위치는 x, y 좌표를 포함하는 객체 형태)
  */
 
-export default function useEnemyMoves() {
+//-1 ~ 1 사이의 랜덤한 수를 반환하는 util 함수
+const getRandomValue = () => {
+  return Math.random() * 2 - 1;
+};
+
+export default function useEnemyMoves(time: number) {
   //맵의 테두리에서 적이 시작하도록 초기 위치 설정 - 예시로 4마리의 적을 맵의 각 모서리에 배치
   //리렌더링 시 불필요한 재생성을 방지하기 위해 useRef를 사용하여 초기 위치를 저장
   const initialEnemyPositions = useRef<Position[]>([
@@ -29,10 +34,36 @@ export default function useEnemyMoves() {
   //enemyPositionArray의 { dx, dy }를 저장하는 reference
   const enemyMovementRef = useRef<{ dx: number; dy: number }[]>(
     initialEnemyPositions.current.map(() => ({
-      dx: Math.random() < 0.5 ? -1 : 1 * ENEMY_SPEED_SCALE * MOVE_DISTANCE,
-      dy: Math.random() < 0.5 ? -1 : 1 * ENEMY_SPEED_SCALE * MOVE_DISTANCE,
+      dx: getRandomValue() * ENEMY_SPEED_SCALE * MOVE_DISTANCE,
+      dy: getRandomValue() * ENEMY_SPEED_SCALE * MOVE_DISTANCE,
     })),
   );
+  //적을 추가하는 함수 - 게임이 진행됨에 따라 새로운 적을 추가할 수 있도록 구현
+  const addEnemy = () => {
+    //적이 추가되는 위치는 initialEnemyPositions에서 랜덤하게 선택
+    const newEnemyPositionIndex = Math.floor(
+      Math.random() * initialEnemyPositions.current.length,
+    );
+    const newEnemyPosition =
+      initialEnemyPositions.current[newEnemyPositionIndex];
+    setEnemyPositionArray((prevPositions) => [
+      ...prevPositions,
+      newEnemyPosition,
+    ]);
+    enemyMovementRef.current.push({
+      dx: getRandomValue() * ENEMY_SPEED_SCALE * MOVE_DISTANCE,
+      dy: getRandomValue() * ENEMY_SPEED_SCALE * MOVE_DISTANCE,
+    });
+  };
+  //마지막으로 적을 추가한 시간을 저장하는 reference - 일정 시간 간격으로 적을 추가하기 위해 사용
+  const lastEnemyAddTimeRef = useRef<number>(time);
+  useGameLoop(() => {
+    if (time - lastEnemyAddTimeRef.current >= 5) {
+      // 5초마다 적 추가
+      addEnemy();
+      lastEnemyAddTimeRef.current = time;
+    }
+  });
   //적의 위치를 주기적으로 업데이트하는 함수 - useGameLoop을 사용하여 일정 간격으로 호출
   const moveEnemies = () => {
     setEnemyPositionArray((prevPositions) =>

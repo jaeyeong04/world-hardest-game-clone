@@ -16,8 +16,8 @@ const GamePlayAreaContainer = styled.div`
 
 export const GamePlayArea = () => {
   const PlayerPosition = usePlayerMoves();
-  const enemyPositionArray = useEnemyMoves();
   const time = useTimer();
+  const enemyPositionArray = useEnemyMoves(time);
   return (
     <GamePlayAreaContainer>
       <GameRecord time={time} />
