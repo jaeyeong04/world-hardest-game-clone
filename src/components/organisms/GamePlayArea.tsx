@@ -1,4 +1,5 @@
 import { UnitVariant } from "../../constants/enum";
+import useCoinManager from "../../hooks/useCoinManager";
 import useEnemyMoves from "../../hooks/useEnemyMoves";
 import usePlayerMoves from "../../hooks/usePlayerMoves";
 import useTimer from "../../hooks/useTimer";
@@ -15,16 +16,20 @@ const GamePlayAreaContainer = styled.div`
 `;
 
 export const GamePlayArea = () => {
-  const PlayerPosition = usePlayerMoves();
+  const playerPosition = usePlayerMoves();
   const time = useTimer();
   const enemyPositionArray = useEnemyMoves(time);
+  const coinPositionArray = useCoinManager({ time, playerPosition });
   return (
     <GamePlayAreaContainer>
       <GameRecord time={time} />
       <Board>
-        <Unit variant={UnitVariant.PLAYER} position={PlayerPosition} />
+        <Unit variant={UnitVariant.PLAYER} position={playerPosition} />
         {enemyPositionArray.map((enemyPos, index) => (
           <Unit key={index} variant={UnitVariant.ENEMY} position={enemyPos} />
+        ))}
+        {coinPositionArray.map((coinPos, index) => (
+          <Unit key={index} variant={UnitVariant.COIN} position={coinPos} />
         ))}
       </Board>
     </GamePlayAreaContainer>
