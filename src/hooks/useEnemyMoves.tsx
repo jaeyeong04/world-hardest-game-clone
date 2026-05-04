@@ -6,17 +6,13 @@ import {
   MOVE_DISTANCE,
 } from "../constants/constants";
 import useGameLoop from "./useGameLoop";
+import { getRandomValue } from "../utils/utils";
 
 /**
  * 적의 움직임을 관리하는 커스텀 훅
  * - 적의 위치를 상태로 관리하여 게임 보드에서 적의 움직임을 구현하는 데 사용
  * @returns enemyPositionArray: 모든 적의 위치를 저장하는 배열 (각 적의 위치는 x, y 좌표를 포함하는 객체 형태)
  */
-
-//-1 ~ 1 사이의 랜덤한 수를 반환하는 util 함수
-const getRandomValue = () => {
-  return Math.random() * 2 - 1;
-};
 
 export default function useEnemyMoves(time: number) {
   //맵의 테두리에서 적이 시작하도록 초기 위치 설정 - 예시로 4마리의 적을 맵의 각 모서리에 배치
