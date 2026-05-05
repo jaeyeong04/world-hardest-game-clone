@@ -8,6 +8,9 @@ import {
 import useGameLoop from "./useGameLoop";
 import { getRandomValue } from "../utils/utils";
 
+//적 추가하는 시간 주기
+const ENEMY_SPAWN_INTERVAL = 5;
+
 /**
  * 적의 움직임을 관리하는 커스텀 훅
  * - 적의 위치를 상태로 관리하여 게임 보드에서 적의 움직임을 구현하는 데 사용
@@ -55,7 +58,7 @@ export default function useEnemyMoves(time: number) {
   const lastEnemyAddTimeRef = useRef<number>(time);
   //5초 간격으로 적을 추가하는 함수
   const checkAndSpawnEnemy = () => {
-    if (time - lastEnemyAddTimeRef.current >= 5) {
+    if (time - lastEnemyAddTimeRef.current >= ENEMY_SPAWN_INTERVAL) {
       addEnemy();
       lastEnemyAddTimeRef.current = time;
     }
