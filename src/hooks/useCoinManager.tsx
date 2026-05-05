@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MAP_BOUNDARY } from "../constants/constants";
 import { Position } from "../constants/enum";
+import useGameLoop from "./useGameLoop";
 
 //코인의 초기 위치 (초기에는 4개)
 const DISTANCE_FROM_WALL = 100;
@@ -23,6 +24,12 @@ const initialCoinPositions: Position[] = [
     y: MAP_BOUNDARY - DISTANCE_FROM_WALL,
   },
 ];
+
+//코인의 최대 개수
+const MAX_COINS = 7;
+
+//코인 생성 주기 (초 단위)
+const COIN_SPAWN_INTERVAL = 7;
 
 //코인과 플레이어의 Position이 일치하는지 확인하는 함수
 /**
@@ -52,14 +59,44 @@ export default function useCoinManager({
   time: number;
   playerPosition: Position;
 }) {
+  //코인의 위치를 저장하는 상태 - 코인은 여러 개가 존재할 수 있으므로 배열 형태로 관리
   const [coinPositions, setCoinPositions] =
     useState<Position[]>(initialCoinPositions);
+  //현재 필드에 있는 코인 개수를 저장하는 ref
+  const coinCountRef = useRef<number>(initialCoinPositions.length);
   useEffect(() => {
     // 플레이어가 코인 위에 있는지 확인
     const updatedCoinPositions = coinPositions.filter(
       (coinPos) => !isPlayerOnCoin(playerPosition, coinPos),
     );
     setCoinPositions(updatedCoinPositions);
+    coinCountRef.current = updatedCoinPositions.length;
   }, [playerPosition]);
+  //TODO: 시간이 지남에 따라 랜덤한 위치에 코인을 생성하는 로직 추가
+  //새로운 코인 2개를 랜덤한 위치에 생성하는 함수
+  const addCoinsOverTime = () => {
+    const newCoins: Position[] = [];
+    for (let i = 0; i < 2; i++) {
+      const newCoinPosition: Position = {
+        x: Math.random() * MAP_BOUNDARY,
+        y: Math.random() * MAP_BOUNDARY,
+      };
+      newCoins.push(newCoinPosition);
+    }
+    setCoinPositions((prev) => [...prev, ...newCoins]);
+    coinCountRef.current += 2;
+  };
+  //마지막으로 코인을 추가한 시간을 저장하는 reference - 일정 시간 간격으로 코인을 추가하기 위해 사용
+  const lastCoinAddTimeRef = useRef<number>(time);
+  //7초 간격으로 코인을 추가하는 함수 (단, 코인 개수에 제한이 있음)
+  const checkAndSpawnCoins = () => {
+    if (time - lastCoinAddTimeRef.current >= COIN_SPAWN_INTERVAL) {
+      if (coinCountRef.current < MAX_COINS) {
+        addCoinsOverTime();
+        lastCoinAddTimeRef.current = time;
+      }
+    }
+  };
+  useGameLoop(checkAndSpawnCoins);
   return coinPositions;
 }
