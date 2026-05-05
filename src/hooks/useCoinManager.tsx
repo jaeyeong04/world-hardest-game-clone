@@ -72,7 +72,6 @@ export default function useCoinManager({
     setCoinPositions(updatedCoinPositions);
     coinCountRef.current = updatedCoinPositions.length;
   }, [playerPosition]);
-  //TODO: 시간이 지남에 따라 랜덤한 위치에 코인을 생성하는 로직 추가
   //새로운 코인 2개를 랜덤한 위치에 생성하는 함수
   const addCoinsOverTime = () => {
     const newCoins: Position[] = [];
