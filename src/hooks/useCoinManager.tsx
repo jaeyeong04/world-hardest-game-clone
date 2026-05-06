@@ -78,7 +78,7 @@ export default function useCoinManager({
     coinCountRef.current = updatedCoinPositions.length;
   }, [playerPosition]);
   //새로운 코인 2개를 랜덤한 위치에 생성하는 함수
-  const addCoinsOverTime = () => {
+  const addCoins = () => {
     const newCoins: Position[] = [];
     for (let i = 0; i < 2; i++) {
       const newCoinPosition: Position = {
@@ -96,9 +96,13 @@ export default function useCoinManager({
   const checkAndSpawnCoins = () => {
     if (time - lastCoinAddTimeRef.current >= COIN_SPAWN_INTERVAL) {
       if (coinCountRef.current < MAX_COINS) {
-        addCoinsOverTime();
+        addCoins();
         lastCoinAddTimeRef.current = time;
       }
+    }
+    //추가로 코인이 2개 이하로 남으면 즉시 2개 추가
+    if (coinCountRef.current <= 2) {
+      addCoins();
     }
   };
   useGameLoop(checkAndSpawnCoins);
