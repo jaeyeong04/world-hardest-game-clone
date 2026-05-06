@@ -55,9 +55,11 @@ const isPlayerOnCoin = (playerPosition: Position, coinPosition: Position) => {
 export default function useCoinManager({
   time,
   playerPosition,
+  onCoinCollected,
 }: {
   time: number;
   playerPosition: Position;
+  onCoinCollected: () => void;
 }) {
   //코인의 위치를 저장하는 상태 - 코인은 여러 개가 존재할 수 있으므로 배열 형태로 관리
   const [coinPositions, setCoinPositions] =
@@ -66,9 +68,12 @@ export default function useCoinManager({
   const coinCountRef = useRef<number>(initialCoinPositions.length);
   useEffect(() => {
     // 플레이어가 코인 위에 있는지 확인
-    const updatedCoinPositions = coinPositions.filter(
-      (coinPos) => !isPlayerOnCoin(playerPosition, coinPos),
-    );
+    const updatedCoinPositions = coinPositions.filter((coinPos) => {
+      if (isPlayerOnCoin(playerPosition, coinPos)) {
+        onCoinCollected(); // 코인이 수집되었을 때 점수 증가 함수 호출
+      }
+      return !isPlayerOnCoin(playerPosition, coinPos);
+    });
     setCoinPositions(updatedCoinPositions);
     coinCountRef.current = updatedCoinPositions.length;
   }, [playerPosition]);

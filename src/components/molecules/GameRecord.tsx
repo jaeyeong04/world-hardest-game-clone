@@ -20,11 +20,17 @@ const formatTime = (time: number) => {
   return `${seconds}:${milliseconds.toString().padStart(2, "0")}`;
 };
 
-export const GameRecord = ({ time }: { time: number }) => {
+export const GameRecord = ({
+  time,
+  score,
+}: {
+  time: number;
+  score: number;
+}) => {
   return (
     <GameRecordContainer>
       <Text usage={TextUsage.LIVES}>Lives: 3</Text>
-      <Text usage={TextUsage.SCORE}>Score: 100</Text>
+      <Text usage={TextUsage.SCORE}>Score: {score}</Text>
       <Text usage={TextUsage.TIME}>Time: {formatTime(time)}</Text>
     </GameRecordContainer>
   );
