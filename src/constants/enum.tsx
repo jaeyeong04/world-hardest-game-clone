@@ -52,3 +52,9 @@ export interface Position {
   x: number;
   y: number;
 }
+
+export enum GameState {
+  PLAYING = "playing",
+  GAME_OVER = "game_over",
+  HOME_SCREEN = "home_screen",
+}
