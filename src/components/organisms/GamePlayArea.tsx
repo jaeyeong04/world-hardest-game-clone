@@ -1,6 +1,7 @@
 import { UnitVariant } from "../../constants/enum";
 import useCoinManager from "../../hooks/useCoinManager";
 import useEnemyManager from "../../hooks/useEnemyManager";
+import useGame from "../../hooks/useGame";
 import usePlayerMoves from "../../hooks/usePlayerMoves";
 import useScoreManager from "../../hooks/useScoreManager";
 import useTimer from "../../hooks/useTimer";
@@ -17,15 +18,16 @@ const GamePlayAreaContainer = styled.div`
 `;
 
 export const GamePlayArea = () => {
-  const playerPosition = usePlayerMoves();
-  const time = useTimer();
-  const enemyPositionArray = useEnemyManager({ time, playerPosition });
-  const coinPositionArray = useCoinManager({
+  const {
+    playState,
+    startGame,
+    endGame,
     time,
+    score,
     playerPosition,
-    onCoinCollected: () => increaseScore(),
-  });
-  const { score, increaseScore } = useScoreManager();
+    enemyPositionArray,
+    coinPositionArray,
+  } = useGame();
   return (
     <GamePlayAreaContainer>
       <GameRecord time={time} score={score} />
