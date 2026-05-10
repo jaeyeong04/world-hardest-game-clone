@@ -1,6 +1,6 @@
 import { UnitVariant } from "../../constants/enum";
 import useCoinManager from "../../hooks/useCoinManager";
-import useEnemyMoves from "../../hooks/useEnemyMoves";
+import useEnemyManager from "../../hooks/useEnemyManager";
 import usePlayerMoves from "../../hooks/usePlayerMoves";
 import useScoreManager from "../../hooks/useScoreManager";
 import useTimer from "../../hooks/useTimer";
@@ -19,7 +19,7 @@ const GamePlayAreaContainer = styled.div`
 export const GamePlayArea = () => {
   const playerPosition = usePlayerMoves();
   const time = useTimer();
-  const enemyPositionArray = useEnemyMoves(time);
+  const enemyPositionArray = useEnemyManager({ time, playerPosition });
   const coinPositionArray = useCoinManager({
     time,
     playerPosition,

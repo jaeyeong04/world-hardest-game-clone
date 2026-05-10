@@ -12,12 +12,34 @@ import { getRandomValue } from "../utils/utils";
 const ENEMY_SPAWN_INTERVAL = 5;
 
 /**
+ * 적과 player가 collide하는지 확인하는 함수
+ * @argument playerPosition: 플레이어의 현재 위치 (x, y 좌표를 포함하는 객체 형태)
+ * @argument enemyPosition: 적의 위치 (x, y 좌표를 포함하는 객체 형태)
+ */
+const COLLISION_ERROR = 20; // 충돌 허용 오차 범위 (20px)
+const isPlayerCollidingWithEnemy = (
+  playerPosition: Position,
+  enemyPosition: Position,
+) => {
+  return (
+    Math.abs(playerPosition.x - enemyPosition.x) < COLLISION_ERROR &&
+    Math.abs(playerPosition.y - enemyPosition.y) < COLLISION_ERROR
+  );
+};
+
+/**
  * 적의 움직임을 관리하는 커스텀 훅
  * - 적의 위치를 상태로 관리하여 게임 보드에서 적의 움직임을 구현하는 데 사용
  * @returns enemyPositionArray: 모든 적의 위치를 저장하는 배열 (각 적의 위치는 x, y 좌표를 포함하는 객체 형태)
  */
 
-export default function useEnemyMoves(time: number) {
+export default function useEnemyManager({
+  time,
+  playerPosition,
+}: {
+  time: number;
+  playerPosition: Position;
+}) {
   //맵의 테두리에서 적이 시작하도록 초기 위치 설정 - 예시로 4마리의 적을 맵의 각 모서리에 배치
   //리렌더링 시 불필요한 재생성을 방지하기 위해 useRef를 사용하여 초기 위치를 저장
   const initialEnemyPositions = useRef<Position[]>([
@@ -81,9 +103,20 @@ export default function useEnemyMoves(time: number) {
       }),
     );
   };
+  //플레이어가 적과 충돌하면 게임오버 처리
+  const checkCollisions = () => {
+    for (const enemyPos of enemyPositionArray) {
+      if (isPlayerCollidingWithEnemy(playerPosition, enemyPos)) {
+        //TODO: 게임오버 처리 (예: 상태 업데이트, 알림 표시 등)
+        alert("Game Over! You collided with an enemy.");
+      }
+    }
+  };
+
   useGameLoop(() => {
     moveEnemies();
     checkAndSpawnEnemy();
+    checkCollisions();
   }); // 1초마다 적의 위치 업데이트
   return enemyPositionArray;
 }
