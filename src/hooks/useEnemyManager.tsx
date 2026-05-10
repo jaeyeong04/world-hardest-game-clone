@@ -36,9 +36,11 @@ const isPlayerCollidingWithEnemy = (
 export default function useEnemyManager({
   time,
   playerPosition,
+  endGame,
 }: {
   time: number;
   playerPosition: Position;
+  endGame: () => void;
 }) {
   //맵의 테두리에서 적이 시작하도록 초기 위치 설정 - 예시로 4마리의 적을 맵의 각 모서리에 배치
   //리렌더링 시 불필요한 재생성을 방지하기 위해 useRef를 사용하여 초기 위치를 저장
@@ -109,6 +111,7 @@ export default function useEnemyManager({
       if (isPlayerCollidingWithEnemy(playerPosition, enemyPos)) {
         //TODO: 게임오버 처리 (예: 상태 업데이트, 알림 표시 등)
         alert("Game Over! You collided with an enemy.");
+        endGame();
       }
     }
   };

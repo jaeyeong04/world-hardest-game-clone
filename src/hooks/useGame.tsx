@@ -22,7 +22,7 @@ export default function useGame() {
   const time = useTimer();
   const { score, increaseScore } = useScoreManager();
   const playerPosition = usePlayerMoves();
-  const enemyPositionArray = useEnemyManager({ time, playerPosition });
+  const enemyPositionArray = useEnemyManager({ time, playerPosition, endGame });
   const coinPositionArray = useCoinManager({
     time,
     playerPosition,
