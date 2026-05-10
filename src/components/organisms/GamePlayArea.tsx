@@ -1,10 +1,5 @@
 import { UnitVariant } from "../../constants/enum";
-import useCoinManager from "../../hooks/useCoinManager";
-import useEnemyManager from "../../hooks/useEnemyManager";
 import useGame from "../../hooks/useGame";
-import usePlayerMoves from "../../hooks/usePlayerMoves";
-import useScoreManager from "../../hooks/useScoreManager";
-import useTimer from "../../hooks/useTimer";
 import { Board } from "../atoms/Board";
 import { Unit } from "../atoms/Unit";
 import { GameRecord } from "../molecules/GameRecord";
