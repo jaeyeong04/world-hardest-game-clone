@@ -1,9 +1,10 @@
-import { UnitVariant } from "../../constants/enum";
+import { GameState, UnitVariant } from "../../constants/enum";
 import useGame from "../../hooks/useGame";
 import { Board } from "../atoms/Board";
 import { Unit } from "../atoms/Unit";
 import { GameRecord } from "../molecules/GameRecord";
 import styled from "styled-components";
+import GameRecordModal from "../molecules/GameRecordModal";
 
 const GamePlayAreaContainer = styled.div`
   display: flex;
@@ -35,6 +36,12 @@ export const GamePlayArea = () => {
           <Unit key={index} variant={UnitVariant.COIN} position={coinPos} />
         ))}
       </Board>
+      <GameRecordModal
+        visible={playState === GameState.GAME_OVER}
+        onClickStart={startGame}
+        time={time}
+        score={score}
+      />
     </GamePlayAreaContainer>
   );
 };
