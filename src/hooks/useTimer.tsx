@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState } from "react";
 import useGameLoop from "./useGameLoop";
+import { GameState } from "../constants/enum";
 
 /**
  * 게임 타이머 훅
@@ -7,16 +8,23 @@ import useGameLoop from "./useGameLoop";
  * @returns time - 게임 진행된 시간 (in seconds)
  */
 
-export default function useTimer() {
+export default function useTimer(playState: GameState) {
   const [time, setTime] = useState<number>(0);
   //time이 0부터 시작하여 1초마다 1씩 증가하도록 구현
   const lastTimeRef = useRef<number>(performance.now());
   const timeIncrease = useCallback(() => {
+    if (playState !== GameState.PLAYING) {
+      return;
+    }
     const now = performance.now();
     const deltaTime = (now - lastTimeRef.current) / 1000;
     lastTimeRef.current = now;
     setTime((prevTime) => prevTime + deltaTime);
+  }, [playState]);
+  const resetTimer = useCallback(() => {
+    setTime(0);
+    lastTimeRef.current = performance.now();
   }, []);
-  useGameLoop(timeIncrease);
-  return time;
+  useGameLoop(timeIncrease, playState);
+  return { time, resetTimer };
 }

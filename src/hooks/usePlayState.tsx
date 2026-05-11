@@ -9,7 +9,7 @@ import { GameState } from "../constants/enum";
  */
 
 export default function usePlayState() {
-  const [playState, setPlayState] = useState<GameState>(GameState.HOME_SCREEN);
+  const [playState, setPlayState] = useState<GameState>(GameState.GAME_OVER);
   //startGame 함수는 게임을 시작할 때 호출 (시작 시 리셋)
   const startGame = () => {
     setPlayState(GameState.PLAYING);

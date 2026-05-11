@@ -1,9 +1,11 @@
+import { useEffect } from "react";
 import useCoinManager from "./useCoinManager";
 import useEnemyManager from "./useEnemyManager";
 import usePlayerMoves from "./usePlayerMoves";
 import usePlayState from "./usePlayState";
 import useScoreManager from "./useScoreManager";
 import useTimer from "./useTimer";
+import { GameState } from "../constants/enum";
 
 /**
  * @description - useGame 훅은 게임의 상태를 관리하는 여러 커스텀 훅을 조합하여, 게임의 전체 상태를 한 번에 가져올 수 있도록 합니다.
@@ -19,23 +21,39 @@ import useTimer from "./useTimer";
 
 export default function useGame() {
   const { playState, startGame, endGame } = usePlayState();
-  const time = useTimer();
-  const { score, increaseScore } = useScoreManager();
-  const playerPosition = usePlayerMoves();
-  const enemyPositionArray = useEnemyManager({ time, playerPosition, endGame });
-  const coinPositionArray = useCoinManager({
+  const { time, resetTimer } = useTimer(playState);
+  const { score, increaseScore, resetScore } = useScoreManager();
+  const { position, resetPlayerPosition } = usePlayerMoves(playState);
+  const { enemyPositionArray, resetEnemyPositions } = useEnemyManager({
+    playState,
     time,
-    playerPosition,
+    playerPosition: position,
+    endGame,
+  });
+  const { coinPositions, resetCoinPositions } = useCoinManager({
+    playState,
+    time,
+    playerPosition: position,
     onCoinCollected: () => increaseScore(),
   });
+  useEffect(() => {
+    if (playState === GameState.PLAYING) {
+      resetTimer();
+      resetScore();
+      resetPlayerPosition();
+      resetEnemyPositions();
+      resetCoinPositions();
+    }
+  }, [playState]);
+
   return {
     playState,
     startGame,
     endGame,
     time,
     score,
-    playerPosition,
+    playerPosition: position,
     enemyPositionArray,
-    coinPositionArray,
+    coinPositionArray: coinPositions,
   };
 }

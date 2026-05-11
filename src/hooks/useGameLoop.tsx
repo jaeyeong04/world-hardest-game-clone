@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { GameState } from "../constants/enum";
 
 /**
  * 게임 루프를 관리하는 커스텀 훅
@@ -9,14 +10,19 @@ import { useEffect, useRef } from "react";
  * @returns void
  */
 
-export default function useGameLoop(callback: () => void) {
+export default function useGameLoop(
+  callback: () => void,
+  playState: GameState,
+) {
   const requestRef = useRef<number>(0);
   const animate = () => {
     callback();
     requestRef.current = requestAnimationFrame(animate);
   };
   useEffect(() => {
-    requestRef.current = requestAnimationFrame(animate);
+    if (playState === GameState.PLAYING) {
+      requestRef.current = requestAnimationFrame(animate);
+    }
     return () => cancelAnimationFrame(requestRef.current);
-  }, [callback]);
+  }, [callback, playState]);
 }

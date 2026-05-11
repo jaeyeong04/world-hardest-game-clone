@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { use, useCallback, useEffect, useRef, useState } from "react";
 import { MAP_BOUNDARY } from "../constants/constants";
-import { Position } from "../constants/enum";
+import { GameState, Position } from "../constants/enum";
 import useGameLoop from "./useGameLoop";
 
 //코인의 초기 위치 (초기에는 4개)
@@ -53,10 +53,12 @@ const isPlayerOnCoin = (playerPosition: Position, coinPosition: Position) => {
  */
 
 export default function useCoinManager({
+  playState,
   time,
   playerPosition,
   onCoinCollected,
 }: {
+  playState: GameState;
   time: number;
   playerPosition: Position;
   onCoinCollected: () => void;
@@ -105,6 +107,12 @@ export default function useCoinManager({
       addCoins();
     }
   };
-  useGameLoop(checkAndSpawnCoins);
-  return coinPositions;
+  //reset 함수
+  const resetCoinPositions = useCallback(() => {
+    setCoinPositions(initialCoinPositions);
+    coinCountRef.current = initialCoinPositions.length;
+    lastCoinAddTimeRef.current = 0;
+  }, []);
+  useGameLoop(checkAndSpawnCoins, playState);
+  return { coinPositions, resetCoinPositions };
 }

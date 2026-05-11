@@ -1,5 +1,5 @@
-import { useRef, useState } from "react";
-import { Position } from "../constants/enum";
+import { useCallback, useRef, useState } from "react";
+import { GameState, Position } from "../constants/enum";
 import {
   ENEMY_SPEED_SCALE,
   MAP_BOUNDARY,
@@ -34,10 +34,12 @@ const isPlayerCollidingWithEnemy = (
  */
 
 export default function useEnemyManager({
+  playState,
   time,
   playerPosition,
   endGame,
 }: {
+  playState: GameState;
   time: number;
   playerPosition: Position;
   endGame: () => void;
@@ -109,17 +111,23 @@ export default function useEnemyManager({
   const checkCollisions = () => {
     for (const enemyPos of enemyPositionArray) {
       if (isPlayerCollidingWithEnemy(playerPosition, enemyPos)) {
-        //TODO: 게임오버 처리 (예: 상태 업데이트, 알림 표시 등)
-        alert("Game Over! You collided with an enemy.");
         endGame();
       }
     }
   };
-
+  //reset 함수
+  const resetEnemyPositions = useCallback(() => {
+    setEnemyPositionArray(initialEnemyPositions.current);
+    enemyMovementRef.current = initialEnemyPositions.current.map(() => ({
+      dx: getRandomValue() * ENEMY_SPEED_SCALE * MOVE_DISTANCE,
+      dy: getRandomValue() * ENEMY_SPEED_SCALE * MOVE_DISTANCE,
+    }));
+    lastEnemyAddTimeRef.current = 0;
+  }, []);
   useGameLoop(() => {
     moveEnemies();
     checkAndSpawnEnemy();
     checkCollisions();
-  }); // 1초마다 적의 위치 업데이트
-  return enemyPositionArray;
+  }, playState); // 1초마다 적의 위치 업데이트
+  return { enemyPositionArray, resetEnemyPositions };
 }

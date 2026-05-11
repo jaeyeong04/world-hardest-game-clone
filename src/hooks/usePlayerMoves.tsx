@@ -2,14 +2,14 @@
 //event listener를 통해 방향키 입력을 감지하고, 해당 방향으로 '말'의 위치를 업데이트
 import { useState, useEffect, useRef, use, useCallback } from "react";
 import { MOVE_DISTANCE } from "../constants/constants";
-import { KeyCode } from "../constants/enum";
+import { GameState, KeyCode } from "../constants/enum";
 import { MAP_BOUNDARY } from "../constants/constants";
 import useGameLoop from "./useGameLoop";
 import { Position } from "../constants/enum";
 
 //TODO: pressedKeys를 state가 아닌 ref로 관리하도록 변경하기
 
-export default function usePlayerMoves() {
+export default function usePlayerMoves(playState: GameState) {
   //초기 위치 설정
   const initialPosition: Position = { x: 300, y: 300 };
   const [position, setPosition] = useState<Position>(initialPosition);
@@ -74,8 +74,10 @@ export default function usePlayerMoves() {
     }
     setPosition({ x: newX, y: newY });
   }, [pressedKeys, position]);
-
   //useGameLoop 훅을 사용해서 매 프레임마다 handlePlayerMovement 호출
-  useGameLoop(handlePlayerMovement);
-  return position;
+  useGameLoop(handlePlayerMovement, playState);
+  const resetPlayerPosition = useCallback(() => {
+    setPosition(initialPosition);
+  }, []);
+  return { position, resetPlayerPosition };
 }
