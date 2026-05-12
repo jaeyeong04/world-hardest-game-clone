@@ -23,6 +23,7 @@ export const GamePlayArea = () => {
     playerPosition,
     enemyPositionArray,
     coinPositionArray,
+    handleStart,
   } = useGame();
   return (
     <GamePlayAreaContainer>
@@ -38,7 +39,7 @@ export const GamePlayArea = () => {
       </Board>
       <GameRecordModal
         visible={playState === GameState.GAME_OVER}
-        onClickStart={startGame}
+        onClickStart={handleStart}
         time={time}
         score={score}
       />

@@ -36,15 +36,14 @@ export default function useGame() {
     playerPosition: position,
     onCoinCollected: () => increaseScore(),
   });
-  useEffect(() => {
-    if (playState === GameState.PLAYING) {
-      resetTimer();
-      resetScore();
-      resetPlayerPosition();
-      resetEnemyPositions();
-      resetCoinPositions();
-    }
-  }, [playState]);
+  const handleStart = () => {
+    startGame();
+    resetTimer();
+    resetScore();
+    resetPlayerPosition();
+    resetEnemyPositions();
+    resetCoinPositions();
+  };
 
   return {
     playState,
@@ -55,5 +54,6 @@ export default function useGame() {
     playerPosition: position,
     enemyPositionArray,
     coinPositionArray: coinPositions,
+    handleStart,
   };
 }
