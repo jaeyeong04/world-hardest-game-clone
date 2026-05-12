@@ -1,6 +1,6 @@
 //Unit 중에 variant가 PLAYER인 '말'의 움직임을 관리하는 custom hook
 //event listener를 통해 방향키 입력을 감지하고, 해당 방향으로 '말'의 위치를 업데이트
-import { useState, useEffect, useRef, use, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { MOVE_DISTANCE } from "../constants/constants";
 import { GameState, KeyCode } from "../constants/enum";
 import { MAP_BOUNDARY } from "../constants/constants";
@@ -13,21 +13,16 @@ export default function usePlayerMoves(playState: GameState) {
   //초기 위치 설정
   const initialPosition: Position = { x: 300, y: 300 };
   const [position, setPosition] = useState<Position>(initialPosition);
-  const [pressedKeys, setPressedKeys] = useState<Array<string>>([]); //key가 눌렸을 때 눌린 키를 pressedKeys에 추가
+  const pressedKeys = useRef<Array<string>>([]); //key가 눌렸을 때 눌린 키를 pressedKeys에 추가
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
     const pressedKeyCode = event.key;
-    setPressedKeys((prevKeys) => {
-      if (!prevKeys.includes(pressedKeyCode)) {
-        return [...prevKeys, pressedKeyCode];
-      }
-      return prevKeys;
-    });
+    pressedKeys.current = [...pressedKeys.current, pressedKeyCode];
   }, []);
   //key가 떼졌을 때 pressedKeys에서 해당 키를 제거
   const handleKeyUp = useCallback((event: KeyboardEvent) => {
     const pressedKeyCode = event.key;
-    setPressedKeys((prevKeys) =>
-      prevKeys.filter((key) => key !== pressedKeyCode),
+    pressedKeys.current = pressedKeys.current.filter(
+      (key) => key !== pressedKeyCode,
     );
   }, []);
   useEffect(() => {
@@ -46,10 +41,10 @@ export default function usePlayerMoves(playState: GameState) {
     //dominant key = 나중에 입력된 키
     //가로와 세로 방향에 각각 dominant key를 정해서, dominant key 방향으로만 움직이도록 구현
     //dominant key는 pressedKeys 중 가로/세로 방향에 해당하는 키 중 가장 마지막에 입력된 키 => 배열의 뒤쪽에 위치한 키
-    const verticalMovementKeys = pressedKeys.filter(
+    const verticalMovementKeys = pressedKeys.current.filter(
       (key) => key === KeyCode.UP || key === KeyCode.DOWN,
     );
-    const horizontalMovementKeys = pressedKeys.filter(
+    const horizontalMovementKeys = pressedKeys.current.filter(
       (key) => key === KeyCode.LEFT || key === KeyCode.RIGHT,
     );
     const verticalDominantKey =
