@@ -11,8 +11,8 @@ const FontMap: {
 };
 
 const StyledText = styled.div<{ usage: TextUsage }>`
-  font-weight: ${(props) => FontMap[props.usage].fontWeight};
-  font-size: ${(props) => FontMap[props.usage].fontSize};
+  font-weight: ${(props) => FontMap[props.usage as TextUsage].fontWeight};
+  font-size: ${(props) => FontMap[props.usage as TextUsage].fontSize};
 `;
 
 export const Text = ({
