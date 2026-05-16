@@ -14,7 +14,7 @@ const StyledUnit = styled.span<{ variant: UnitVariant }>`
   height: 20px;
   position: absolute;
   display: inline-block;
-  background-color: ${(props) => colorMap[props.variant]};
+  background-color: ${(props) => colorMap[props.variant as UnitVariant]};
   border-radius: ${(props) =>
     props.variant === UnitVariant.PLAYER ? "0%" : "50%"};
   border: 3px solid black;
