@@ -29,7 +29,6 @@ export const GameRecord = ({
 }) => {
   return (
     <GameRecordContainer>
-      <Text usage={TextUsage.LIVES}>Lives: 3</Text>
       <Text usage={TextUsage.SCORE}>Score: {score}</Text>
       <Text usage={TextUsage.TIME}>Time: {formatTime(time)}</Text>
     </GameRecordContainer>
